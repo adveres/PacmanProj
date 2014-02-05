@@ -6,7 +6,8 @@
 *.ear
 *.class
 
-# eclipse specific git ignore
+# Eclipse specific git ignore #
+###############################
 *.pydevproject
 .project
 .metadata
@@ -21,3 +22,4 @@ local.properties
 .classpath
 .settings/
 .loadpath
+.DS_STORE

@@ -22,19 +22,19 @@ public class DatabaseClass {
     */
     public DatabaseClass()
     {
-        try
-        {
-        //Establish a connection to the database 
-          databaseConnection = DriverManager.getConnection("jdbc:derby:\\AdamDatabase");
-          System.out.println("Yay, connection successful!");
-          statement = databaseConnection.createStatement();
-          // resultSet = statement.executeQuery("SELECT * FROM HIGH_SCORE2");
-          // resultSet.next();
-        }
-        catch (SQLException exception)
-        {
-            exception.printStackTrace();
-        }
+//        try
+//        {
+//        //Establish a connection to the database 
+//          //databaseConnection = DriverManager.getConnection("jdbc:derby:\\AdamDatabase");
+//          System.out.println("Yay, connection successful!");
+//          statement = databaseConnection.createStatement();
+//          // resultSet = statement.executeQuery("SELECT * FROM HIGH_SCORE2");
+//          // resultSet.next();
+//        }
+//        catch (SQLException exception)
+//        {
+//            exception.printStackTrace();
+//        }
     }
     /**
      * Creates a new table, this method does NOT need to be called after one time.
@@ -56,15 +56,15 @@ public class DatabaseClass {
         }
         finally
         {
-            try
-            {
-               databaseConnection.close();
-               System.out.println("Yay, database disconnected");
-            }
-            catch (SQLException exception)
-            {
-                exception.printStackTrace();
-            }
+//            try
+//            {
+//               databaseConnection.close();
+//               System.out.println("Yay, database disconnected");
+//            }
+//            catch (SQLException exception)
+//            {
+//                exception.printStackTrace();
+//            }
         }
 
     }
@@ -113,17 +113,17 @@ public class DatabaseClass {
      */
     public int getHighScore()
     {
-        try
-        {
-         ResultSet resultSet = statement.executeQuery("SELECT SCORE FROM HIGH_SCORE");
-         resultSet.next();
-         //System.out.println(resultSet.getInt("SCORE"));
-         return resultSet.getInt("SCORE");
-        }
-        catch (SQLException exception)
-        {
-            exception.printStackTrace();
-        }
+//        try
+//        {
+//         ResultSet resultSet = statement.executeQuery("SELECT SCORE FROM HIGH_SCORE");
+//         resultSet.next();
+//         //System.out.println(resultSet.getInt("SCORE"));
+//         return resultSet.getInt("SCORE");
+//        }
+//        catch (SQLException exception)
+//        {
+//            exception.printStackTrace();
+//        }
         return -1;
     }
     /**
@@ -132,16 +132,16 @@ public class DatabaseClass {
      */
     public String getName()
     {
-        try
-        {
-         ResultSet resultSet = statement.executeQuery("SELECT NAME FROM HIGH_SCORE");
-         resultSet.next();
-         return resultSet.getString("NAME");
-        }
-        catch (SQLException exception)
-        {
-            exception.printStackTrace();
-        }
+//        try
+//        {
+//         ResultSet resultSet = statement.executeQuery("SELECT NAME FROM HIGH_SCORE");
+//         resultSet.next();
+//         return resultSet.getString("NAME");
+//        }
+//        catch (SQLException exception)
+//        {
+//            exception.printStackTrace();
+//        }
         return "Failed to get Name";
     }
 }
