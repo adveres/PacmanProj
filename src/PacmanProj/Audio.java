@@ -13,16 +13,17 @@ class Audio {
     private InputStream in;
     private AudioStream as;
 
-    private static final String SOUND_INTRO_SONG = "AudioFolder"+File.separator+"intro.wav";
-    private static final String SOUND_MUNCH = "AudioFolder"+File.separator+"munch A.wav";
-    private static final String SOUND_DEATH = "AudioFolder"+File.separator+"death 1.wav";
+    private static final String FOLDER = "AudioFolder";
+    private static final String SOUND_INTRO = FOLDER + File.separator + "intro.wav";
+    private static final String SOUND_MUNCH = FOLDER + File.separator + "munch A.wav";
+    private static final String SOUND_DEATH = FOLDER + File.separator + "death 1.wav";
 
     /**
      * Plays Pacman's intro music
      */
     public void playIntroMusic() {
         try {
-            in = new FileInputStream(SOUND_INTRO_SONG);
+            in = new FileInputStream(SOUND_INTRO);
             as = new AudioStream(in);
             AudioPlayer.player.start(as);
         } catch (IOException e) {

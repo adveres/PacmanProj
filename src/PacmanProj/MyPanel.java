@@ -5,6 +5,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import Utils.Directions;
+
 public class MyPanel extends JPanel implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 3306983287208108071L;
@@ -49,10 +51,10 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
             game.evil2.animateMouth();
             repaint();
 
-            if (game.pacman.powered == true)
+            if (game.pacman.isPowered())
                 counter3++;
             if (counter3 >= 150) {
-                game.pacman.powered = false;
+                game.pacman.setPowered(false);
                 counter3 = 0;
                 game.evil1.setColor(Color.RED);
                 game.evil2.setColor(Color.RED);
@@ -92,29 +94,34 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         int x = e.getKeyCode();
 
         // Exit!
-        if (x == KeyEvent.VK_ESCAPE)
+        if (x == KeyEvent.VK_ESCAPE){
             System.exit(0);
+        }
 
         // Movement controls
         if (x == KeyEvent.VK_LEFT) {
-            game.pacman.direction = 180;
-            if (!game.isCollision(game.pacman))
+            game.pacman.setDirection(Directions.LEFT);
+            if (!game.isCollision(game.pacman)) {
                 game.pacman.moveHorizontal(-10);
+            }
         }
-        if (x == KeyEvent.VK_RIGHT) {
-            game.pacman.direction = 0;
-            if (!game.isCollision(game.pacman))
+        else if (x == KeyEvent.VK_RIGHT) {
+            game.pacman.setDirection(Directions.RIGHT);
+            if (!game.isCollision(game.pacman)) {
                 game.pacman.moveHorizontal(10);
+            }
         }
-        if (x == KeyEvent.VK_UP) {
-            game.pacman.direction = 90;
-            if (!game.isCollision(game.pacman))
+        else if (x == KeyEvent.VK_UP) {
+            game.pacman.setDirection(Directions.UP);;
+            if (!game.isCollision(game.pacman)) {
                 game.pacman.moveVertical(-10);
+            }
         }
-        if (x == KeyEvent.VK_DOWN) {
-            game.pacman.direction = 270;
-            if (!game.isCollision(game.pacman))
+        else if (x == KeyEvent.VK_DOWN) {
+            game.pacman.setDirection(Directions.DOWN);
+            if (!game.isCollision(game.pacman)) {
                 game.pacman.moveVertical(10);
+            }
         }
 
         // Deal with dot collision
@@ -126,7 +133,7 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         if (game.gb.isPowerDot(game.pacman.getX(), game.pacman.getY())) {
             game.sounds.playMunch();
             game.score += 15;
-            game.pacman.powered = true;
+            game.pacman.setPowered(true);
             game.evil1.setColor(Color.BLUE);
             game.evil2.setColor(Color.BLUE);
         }
@@ -164,18 +171,19 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         m.setFont(new java.awt.Font("Dialog", 1, 20));
         m.setColor(Color.RED);
         m.drawString("" + game.score, 1090, 300);
+
         // Displays the current lives
         m.drawString("" + game.lives, 1060, 350);
+
         // Displays the pacman icon
         m.setColor(Color.CYAN);
         m.fillArc(1050, 10, 100, 100, 45, 270);
+
         // Displays Highscore
         m.setColor(Color.BLUE);
         m.setFont(new java.awt.Font("Dialog", 1, 15));
         m.drawString("High Score:", 1005, 500);
-        m.drawString(
-                "" + game.topScore.getHighScore() + " "
-                        + game.topScore.getName(), 1007, 525);
+        m.drawString("" + game.topScore.getHighScore() + " " + game.topScore.getName(), 1007, 525);
 
     }
 
@@ -203,9 +211,7 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         myTimer.stop();
         g.setFont(new java.awt.Font("Dialog", 1, 20));
         g.drawString("High Score:", 500, 650);
-        g.drawString(
-                "" + game.topScore.getHighScore() + " "
-                        + game.topScore.getName(), 500, 700);
+        g.drawString("" + game.topScore.getHighScore() + " " + game.topScore.getName(), 500, 700);
 
         repaint();
 
@@ -232,8 +238,7 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
                     g.setColor(Color.black);
                     break;
                 }
-                g.fillRect(count2 * BLOCK_SIZE, count1 * BLOCK_SIZE,
-                        BLOCK_SIZE, BLOCK_SIZE);
+                g.fillRect(count2 * BLOCK_SIZE, count1 * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
             }
         }
         // This should fill in dots and POWERRRR dots where necessary
@@ -242,30 +247,29 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
             for (int count2 = 0; count2 < 20; count2++) {
                 if (game.gb.gameBoard[count1][count2] == 'd') {
                     g.setColor(Color.WHITE);
-                    g.fillOval(count2 * BLOCK_SIZE + (BLOCK_SIZE / 3), count1
-                            * BLOCK_SIZE + (BLOCK_SIZE / 3), 15, 15);
+                    g.fillOval(count2 * BLOCK_SIZE + (BLOCK_SIZE / 3), count1 * BLOCK_SIZE
+                            + (BLOCK_SIZE / 3), 15, 15);
                 }
                 if (game.gb.gameBoard[count1][count2] == 'p') {
                     g.setColor(Color.MAGENTA);
-                    g.fillOval(count2 * BLOCK_SIZE + (BLOCK_SIZE / 3), count1
-                            * BLOCK_SIZE + (BLOCK_SIZE / 3), 20, 20);
+                    g.fillOval(count2 * BLOCK_SIZE + (BLOCK_SIZE / 3), count1 * BLOCK_SIZE
+                            + (BLOCK_SIZE / 3), 20, 20);
                 }
             }
         }
 
         g.setColor(game.pacman.col);
-        g.fillArc(game.pacman.getX(), game.pacman.getY(), BLOCK_SIZE,
-                BLOCK_SIZE,
+        g.fillArc(game.pacman.getX(), game.pacman.getY(), BLOCK_SIZE, BLOCK_SIZE,
                 game.pacman.mouthAngle + game.pacman.getDirection(),
-                270 + ((45 - game.pacman.getAngle()) * 2));
+                270 + ((45 - game.pacman.getMouthAngle()) * 2));
 
         g.setColor(game.evil1.col);
         g.fillArc(game.evil1.getX(), game.evil1.getY(), BLOCK_SIZE, BLOCK_SIZE,
                 game.evil1.mouthAngle + game.evil1.getDirection(),
-                270 + ((45 - game.evil1.getAngle()) * 2));
+                270 + ((45 - game.evil1.getMouthAngle()) * 2));
         g.fillArc(game.evil2.getX(), game.evil2.getY(), BLOCK_SIZE, BLOCK_SIZE,
                 game.evil2.mouthAngle + game.evil2.getDirection(),
-                270 + ((45 - game.evil2.getAngle()) * 2));
+                270 + ((45 - game.evil2.getMouthAngle()) * 2));
 
         if (game.isGameOver()) {
             game.gb.setBoardToWalls();

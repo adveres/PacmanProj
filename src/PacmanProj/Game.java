@@ -34,8 +34,7 @@ public class Game {
      * Default Constructor for Game
      */
     public Game() {
-        newWinner = JOptionPane.showInputDialog(null, "Enter your name : ",
-                "Player Name!", 3);
+        newWinner = JOptionPane.showInputDialog(null, "Enter your name : ", "Player Name!", 3);
         score = 0;
         lives = 3;
         gb = new GameBoard();
@@ -72,17 +71,17 @@ public class Game {
      * @return is a boolean
      */
     public boolean isCollision(Pacman p) {
-        if ((isGhost() == 1 || isGhost() == 2) && pacman.powered == false) {
+        if ((isGhost() == 1 || isGhost() == 2) && !pacman.isPowered()) {
             sounds.playDeath();
             lives--;
             pacman.initializePos(450, 550, 0);
             evil1.initializePos(350, 400, 180);
             evil2.initializePos(550, 400, 0);
             return true;
-        } else if (isGhost() == 1 && pacman.powered == true) {
+        } else if (isGhost() == 1 && pacman.isPowered()) {
             evil1.initializePos(350, 400, 180);
             score += 50;
-        } else if (isGhost() == 2 && pacman.powered == true) {
+        } else if (isGhost() == 2 && pacman.isPowered()) {
             evil2.initializePos(550, 400, 0);
             score += 50;
         }
@@ -103,32 +102,28 @@ public class Game {
                 if ((col * BLOCK_SIZE) + BLOCK_SIZE == pac.getX()
                         && (row * BLOCK_SIZE) + BLOCK_SIZE > pac.getY()
                         && (row * BLOCK_SIZE) < pac.getY() + BLOCK_SIZE
-                        && gb.gameBoard[row][col] == 'w'
-                        && pac.getDirection() == 180) {
+                        && gb.gameBoard[row][col] == 'w' && pac.getDirection() == 180) {
                     return true;
                 }
                 // Right
-                else if ((col * BLOCK_SIZE) == pac.pacmanx + BLOCK_SIZE
+                else if ((col * BLOCK_SIZE) == pac.getX() + BLOCK_SIZE
                         && (row * BLOCK_SIZE) + BLOCK_SIZE > pac.getY()
                         && (row * BLOCK_SIZE) < pac.getY() + BLOCK_SIZE
-                        && gb.gameBoard[row][col] == 'w'
-                        && pac.getDirection() == 0) {
+                        && gb.gameBoard[row][col] == 'w' && pac.getDirection() == 0) {
                     return true;
                 }
                 // Up
                 else if ((row * BLOCK_SIZE) + BLOCK_SIZE == pac.getY()
-                        && (col * BLOCK_SIZE) + BLOCK_SIZE > pac.pacmanx
-                        && (col * BLOCK_SIZE) < pac.pacmanx + BLOCK_SIZE
-                        && gb.gameBoard[row][col] == 'w'
-                        && pac.getDirection() == 90) {
+                        && (col * BLOCK_SIZE) + BLOCK_SIZE > pac.getX()
+                        && (col * BLOCK_SIZE) < pac.getX() + BLOCK_SIZE
+                        && gb.gameBoard[row][col] == 'w' && pac.getDirection() == 90) {
                     return true;
                 }
                 // Down
                 else if ((row * BLOCK_SIZE) == pac.getY() + BLOCK_SIZE
                         && (col * BLOCK_SIZE) + BLOCK_SIZE > pac.getX()
                         && (col * BLOCK_SIZE) < pac.getX() + BLOCK_SIZE
-                        && gb.gameBoard[row][col] == 'w'
-                        && pac.getDirection() == 270) {
+                        && gb.gameBoard[row][col] == 'w' && pac.getDirection() == 270) {
                     return true;
                 }
             }

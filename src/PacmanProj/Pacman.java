@@ -1,29 +1,29 @@
 package PacmanProj;
 
 import java.awt.Color;
-import java.util.Random;
+
+import Utils.Directions;
+import Utils.Utils;
 
 public class Pacman {
 
     int mouthAngle;
-    int pacmanx;
-    int pacmany;
+    int pacmanX;
+    int pacmanY;
     int direction;
     int lives;
     int mouthChange;
     boolean mouthOpen;
     Color col;
-    boolean powered;
+    private boolean powered;
 
     /**
      * Pacman Default Constructor
      */
     public Pacman() {
-        pacmanx = 450;
-        pacmany = 550;
+        initializePos(450, 550, 0);
         lives = 3;
         mouthAngle = 45;
-        direction = 0;
         lives = 3;
         col = Color.YELLOW;
         mouthChange = 5;
@@ -56,18 +56,9 @@ public class Pacman {
      * @param dir is the direction this pacman will face
      */
     public void initializePos(int x, int y, int dir) {
-        pacmanx = x;
-        pacmany = y;
+        pacmanX = x;
+        pacmanY = y;
         direction = dir;
-    }
-
-    /**
-     * Changes the color of a Pacman object
-     * 
-     * @param color is the new color
-     */
-    public void setColor(Color color) {
-        col = color;
     }
 
     /**
@@ -76,7 +67,7 @@ public class Pacman {
      * @param shift is the amount to be moved
      */
     public void moveHorizontal(int shift) {
-        pacmanx += shift;
+        pacmanX += shift;
     }
 
     /**
@@ -85,7 +76,7 @@ public class Pacman {
      * @param shift is the amount to be moved
      */
     public void moveVertical(int shift) {
-        pacmany += shift;
+        pacmanY += shift;
     }
 
     /**
@@ -93,48 +84,42 @@ public class Pacman {
      * mouth appearance
      */
     public void animateMouth() {
-        if (getAngle() == 0)
+
+        // Bounce the mouth between 0 and 45 degrees
+        if (getMouthAngle() == 0) {
             mouthOpen = false;
-        else if (getAngle() == 45)
+        } else if (getMouthAngle() == 45) {
             mouthOpen = true;
-        if (mouthOpen)
+        }
+
+        // If mouth was open, we're closing it. If it was closed, we're opening it.
+        if (mouthOpen) {
             mouthAngle -= mouthChange;
-        else
+        } else {
             mouthAngle += mouthChange;
-    }
-
-    /**
-     * generates a random number between 1 and 4 and returns it
-     * 
-     * @return temp is the random number
-     */
-    public int randomNumber() {
-        Random gen = new Random();
-        int temp = gen.nextInt(4);
-
-        return temp;
+        }
     }
 
     /**
      * Generates a random number and causes the direction to change based on
-     * this
+     * that.
      */
     public void randomDir() {
-        int rand = randomNumber();
+        int rand = Utils.generateRandomNumber(Directions.DIRECTIONS);
         int temp = 0;
 
         switch (rand) {
         case 0:
-            temp = 0;
+            temp = Directions.RIGHT;
             break;
         case 1:
-            temp = 90;
+            temp = Directions.UP;
             break;
         case 2:
-            temp = 180;
+            temp = Directions.LEFT;
             break;
         case 3:
-            temp = 270;
+            temp = Directions.DOWN;
             break;
         }
 
@@ -147,56 +132,52 @@ public class Pacman {
     public void moveEvil() {
 
         switch (direction) {
-        case 0:
-            moveHorizontal(10);
+        case Directions.RIGHT:
+            moveHorizontal(Directions.MOVE_DELTA);
             break;
-        case 90:
-            moveVertical(-10);
+        case Directions.UP:
+            moveVertical(-Directions.MOVE_DELTA);
             break;
-        case 180:
-            moveHorizontal(-10);
+        case Directions.LEFT:
+            moveHorizontal(-Directions.MOVE_DELTA);
             break;
-        case 270:
-            moveVertical(10);
+        case Directions.DOWN:
+            moveVertical(Directions.MOVE_DELTA);
             break;
         }
 
     }
 
-    /**
-     * Returns the x coordinate of this Pacman object
-     * 
-     * @return pacman x is the x coord
-     */
     public int getX() {
-        return pacmanx;
+        return pacmanX;
     }
 
-    /**
-     * Returns the y coordinate of this Pacman object
-     * 
-     * @return pacmany is the y coord
-     */
     public int getY() {
-        return pacmany;
+        return pacmanY;
     }
 
-    /**
-     * Returns the direction in degrees of this Pacman object
-     * 
-     * @return direction is the direction currently faced
-     */
     public int getDirection() {
         return direction;
     }
+    public void setDirection(int direction){
+        this.direction = direction;
+    }
 
-    /**
-     * Returns the mouth angle of this Pacman object
-     * 
-     * @return mouthangle is the angle
-     */
-    public int getAngle() {
+    public int getMouthAngle() {
         return mouthAngle;
     }
+
+    public void setColor(Color color) {
+        col = color;
+    }
+
+    public boolean isPowered() {
+        return powered;
+    }
+
+    public void setPowered(boolean powered) {
+        this.powered = powered;
+    }
+
 
 }
