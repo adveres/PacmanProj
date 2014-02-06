@@ -33,57 +33,51 @@ public class GameBoard {
 			{'w','p','d','d','w','d','d','d','d','d','d','d','d','d','d','d','d','p','d','w'},
 			{'w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w'}
 			};
+
     /**
      * Checks to see if the player's Pacman runs over a dot
+     * 
      * @return is a boolean
      */
-    public boolean isDot(int x, int y)
-    {
-    	for(int row = 0; row<18; row++)
-    	{
-    		for (int col = 0; col<20; col++)
-    		{
-    			if(x == col*BLOCK_SIZE && y == row*BLOCK_SIZE &&
-    					gameBoard[row][col] == 'd')
-    			{
-    				gameBoard[row][col] = 'n';
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+    public boolean isDot(int x, int y) {
+        for (int row = 0; row < 18; row++) {
+            for (int col = 0; col < 20; col++) {
+                if (x == col * BLOCK_SIZE && y == row * BLOCK_SIZE
+                        && gameBoard[row][col] == 'd') {
+                    gameBoard[row][col] = 'n';
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-        /**
+
+    /**
      * Checks to see if the player's Pacman runs over a POWERRRRR dot
+     * 
      * @return is a boolean
      */
-    public boolean isPowerDot(int x, int y)
-    {
-    	for(int row = 0; row<18; row++)
-    	{
-    		for (int col = 0; col<20; col++)
-    		{
-    			if(x == col*BLOCK_SIZE && y == row*BLOCK_SIZE &&
-    					gameBoard[row][col] == 'p')
-    			{
-    				gameBoard[row][col] = 'n';
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+    public boolean isPowerDot(int x, int y) {
+        for (int row = 0; row < 18; row++) {
+            for (int col = 0; col < 20; col++) {
+                if (x == col * BLOCK_SIZE && y == row * BLOCK_SIZE
+                        && gameBoard[row][col] == 'p') {
+                    gameBoard[row][col] = 'n';
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+
     /**
      * Sets the entire board to walls. This is for once the game ends.
      */
-    public void setBoardToWalls()
-    {
-        for(int row = 0; row<18; row++)
-    	{
-    		for (int col = 0; col<20; col++)
-    		{
-                    gameBoard[row][col] = 'w';
-                }
+    public void setBoardToWalls() {
+        for (int row = 0; row < 18; row++) {
+            for (int col = 0; col < 20; col++) {
+                gameBoard[row][col] = 'w';
+            }
         }
     }
 }
