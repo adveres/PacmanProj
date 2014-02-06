@@ -2,20 +2,19 @@ package PacmanProj;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 
 import Utils.Directions;
+import static PacmanProj.Game.BLOCK_SIZE;
 
 public class MyPanel extends JPanel implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 3306983287208108071L;
     private Timer myTimer;
     private Game game;
-    private int counter = 0, counter2 = 0, counter3 = 0;
+    private int evilMoveCounter = 0, evilDirectionCounter = 0, powerCounter = 0;
 
     JTextField b = new JTextField();
-    final int BLOCK_SIZE = 50;
 
     // int score = 0;
 
@@ -26,7 +25,7 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         super();
 
         game = new Game();
-        game.sounds.playIntroMusic();
+        game.getSounds().playIntroMusic();
 
         b.setOpaque(false);
         add(b);
@@ -41,9 +40,11 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
      * This method decides what to do with each firing of the timer. It calls
      * all appropriate methods to check for gameover, and move evil pacmen. It
      * also handles changing states for evil pacmen when Pacman gets a POWERRR
-     * dot
+     * dot.
+     * 
+     * @param ActionEvent
      */
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent action) {
         if (!game.isGameOver()) {
 
             game.pacman.animateMouth();
@@ -51,16 +52,20 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
             game.evil2.animateMouth();
             repaint();
 
-            if (game.pacman.isPowered())
-                counter3++;
-            if (counter3 >= 150) {
+            if (game.pacman.isPowered()) {
+                powerCounter++;
+            }
+            if (powerCounter >= 150) {
                 game.pacman.setPowered(false);
-                counter3 = 0;
+                powerCounter = 0;
                 game.evil1.setColor(Color.RED);
                 game.evil2.setColor(Color.RED);
             }
 
-            if (counter2 >= 5) {
+            // Every 5 ticks the evil Pacmen pick a new direction to go
+            // 5 ticks matters because each tick they move 10, and each block is
+            // 50.
+            if (evilDirectionCounter >= 5) {
                 do {
                     game.evil1.randomDir();
                 } while (game.isCollision(game.evil1));
@@ -68,18 +73,24 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
                 do {
                     game.evil2.randomDir();
                 } while (game.isCollision(game.evil2));
-                counter2 = 0;
+                evilDirectionCounter = 0;
             }
-            if (counter >= 1) {
 
-                if (!game.isCollision(game.evil1))
+            // evilMoveCounter slows down the evil Pacmen. They move every other tick.
+            // They're kind of spastic without this.
+            if (evilMoveCounter >= 1) {
+                if (!game.isCollision(game.evil1)) {
                     game.evil1.moveEvil();
-                if (!game.isCollision(game.evil2))
+                }
+                if (!game.isCollision(game.evil2)) {
                     game.evil2.moveEvil();
-                counter = 0;
+                }
+                evilMoveCounter = 0;
             }
-            counter++;
-            counter2++;
+
+            // Increment the counters on each tick
+            evilMoveCounter++;
+            evilDirectionCounter++;
         }
 
     }
@@ -94,7 +105,7 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         int x = e.getKeyCode();
 
         // Exit!
-        if (x == KeyEvent.VK_ESCAPE){
+        if (x == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
 
@@ -104,20 +115,18 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
             if (!game.isCollision(game.pacman)) {
                 game.pacman.moveHorizontal(-10);
             }
-        }
-        else if (x == KeyEvent.VK_RIGHT) {
+        } else if (x == KeyEvent.VK_RIGHT) {
             game.pacman.setDirection(Directions.RIGHT);
             if (!game.isCollision(game.pacman)) {
                 game.pacman.moveHorizontal(10);
             }
-        }
-        else if (x == KeyEvent.VK_UP) {
-            game.pacman.setDirection(Directions.UP);;
+        } else if (x == KeyEvent.VK_UP) {
+            game.pacman.setDirection(Directions.UP);
+            ;
             if (!game.isCollision(game.pacman)) {
                 game.pacman.moveVertical(-10);
             }
-        }
-        else if (x == KeyEvent.VK_DOWN) {
+        } else if (x == KeyEvent.VK_DOWN) {
             game.pacman.setDirection(Directions.DOWN);
             if (!game.isCollision(game.pacman)) {
                 game.pacman.moveVertical(10);
@@ -126,12 +135,12 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
 
         // Deal with dot collision
         if (game.gb.isDot(game.pacman.getX(), game.pacman.getY())) {
-            game.sounds.playMunch();
+            game.getSounds().playMunch();
             game.score += 10;
 
         }
         if (game.gb.isPowerDot(game.pacman.getX(), game.pacman.getY())) {
-            game.sounds.playMunch();
+            game.getSounds().playMunch();
             game.score += 15;
             game.pacman.setPowered(true);
             game.evil1.setColor(Color.BLUE);
@@ -165,12 +174,14 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         m.drawString("Brian Hare", 1010, 165);
         m.drawString("Adam Veres", 1010, 180);
 
+        // Draw lives title string
         m.drawString("Lives:", 1010, 350);
+
         // Displays the score on the sidebar
         m.drawString("Score:", 1010, 300);
         m.setFont(new java.awt.Font("Dialog", 1, 20));
         m.setColor(Color.RED);
-        m.drawString("" + game.score, 1090, 300);
+        m.drawString("" + game.score, 1100, 300);
 
         // Displays the current lives
         m.drawString("" + game.lives, 1060, 350);
@@ -183,7 +194,9 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         m.setColor(Color.BLUE);
         m.setFont(new java.awt.Font("Dialog", 1, 15));
         m.drawString("High Score:", 1005, 500);
-        m.drawString("" + game.topScore.getHighScore() + " " + game.topScore.getName(), 1007, 525);
+        m.drawString("TODO", 1007, 525);
+        // m.drawString("" + game.topScore.getHighScore() + " " +
+        // game.topScore.getName(), 1007, 525);
 
     }
 
@@ -211,7 +224,8 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
         myTimer.stop();
         g.setFont(new java.awt.Font("Dialog", 1, 20));
         g.drawString("High Score:", 500, 650);
-        g.drawString("" + game.topScore.getHighScore() + " " + game.topScore.getName(), 500, 700);
+        // g.drawString("" + game.topScore.getHighScore() + " " +
+        // game.topScore.getName(), 500, 700);
 
         repaint();
 

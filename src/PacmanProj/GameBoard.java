@@ -5,13 +5,13 @@
 
 package PacmanProj;
 
+import static PacmanProj.Game.BLOCK_SIZE;
+
 /**
  *
  * @author atv5011
  */
 public class GameBoard {
-
-       final int BLOCK_SIZE = 50;
     
     	char[][] gameBoard = {
 			{'w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w','w'},
