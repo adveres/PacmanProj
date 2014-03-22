@@ -104,7 +104,7 @@ public class Pacman {
      * Generates a random number and causes the direction to change based on
      * that.
      */
-    public void randomDir() {
+    public void pickNewRandomDirection() {
         int rand = Utils.generateRandomNumber(Directions.DIRECTIONS);
         int temp = 0;
 
@@ -129,20 +129,24 @@ public class Pacman {
     /**
      * This method moves the evil pacmen based on the direction they are facing
      */
-    public void moveEvil() {
+    public void moveCurrentDirection(boolean isSlowed) {
 
+        int moveAmount = Directions.MOVE_DELTA;
+        if(isSlowed) {
+            moveAmount = Directions.MOVE_SLOWLY;
+        }
         switch (direction) {
         case Directions.RIGHT:
-            moveHorizontal(Directions.MOVE_DELTA);
+            moveHorizontal(moveAmount);
             break;
         case Directions.UP:
-            moveVertical(-Directions.MOVE_DELTA);
+            moveVertical(-moveAmount);
             break;
         case Directions.LEFT:
-            moveHorizontal(-Directions.MOVE_DELTA);
+            moveHorizontal(-moveAmount);
             break;
         case Directions.DOWN:
-            moveVertical(Directions.MOVE_DELTA);
+            moveVertical(moveAmount);
             break;
         }
 

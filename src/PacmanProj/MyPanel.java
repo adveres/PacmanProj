@@ -9,10 +9,11 @@ import static PacmanProj.Game.BLOCK_SIZE;
 
 public class MyPanel extends JPanel implements ActionListener, KeyListener {
 
+    private static final int EVIL_DIR_TICKS = 5;
     private static final long serialVersionUID = 3306983287208108071L;
     private Timer myTimer;
     private Game game;
-    private int evilMoveCounter = 0, evilDirectionCounter = 0, powerCounter = 0;
+    private int moveCounter = 0, evilDirectionCounter = 0, powerCounter = 0;
 
     JTextField b = new JTextField();
 
@@ -54,45 +55,71 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
 
             if (game.pacman.isPowered()) {
                 powerCounter++;
-            }
-            if (powerCounter >= 150) {
-                game.pacman.setPowered(false);
-                powerCounter = 0;
-                game.evil1.setColor(Color.RED);
-                game.evil2.setColor(Color.RED);
+
+                if (powerCounter >= 150) {
+                    game.pacman.setPowered(false);
+                    powerCounter = 0;
+                    game.evil1.setColor(Color.RED);
+                    game.evil2.setColor(Color.RED);
+                }
             }
 
             // Every 5 ticks the evil Pacmen pick a new direction to go
             // 5 ticks matters because each tick they move 10, and each block is
             // 50.
-            if (evilDirectionCounter >= 5) {
+            if (evilDirectionCounter >= EVIL_DIR_TICKS) {
                 do {
-                    game.evil1.randomDir();
+                    game.evil1.pickNewRandomDirection();
                 } while (game.isCollision(game.evil1));
 
                 do {
-                    game.evil2.randomDir();
+                    game.evil2.pickNewRandomDirection();
                 } while (game.isCollision(game.evil2));
                 evilDirectionCounter = 0;
             }
 
             // evilMoveCounter slows down the evil Pacmen. They move every other tick.
             // They're kind of spastic without this.
-            if (evilMoveCounter >= 1) {
+            if (moveCounter >= 1) {
                 if (!game.isCollision(game.evil1)) {
-                    game.evil1.moveEvil();
+                    game.evil1.moveCurrentDirection(game.pacman.isPowered());
                 }
                 if (!game.isCollision(game.evil2)) {
-                    game.evil2.moveEvil();
+                    game.evil2.moveCurrentDirection(game.pacman.isPowered());
                 }
-                evilMoveCounter = 0;
+                if (!game.isCollision(game.pacman)) {
+                    game.pacman.moveCurrentDirection(false);
+                    handleDotCollision();
+                }
+                moveCounter = 0;
             }
 
             // Increment the counters on each tick
-            evilMoveCounter++;
+            moveCounter++;
             evilDirectionCounter++;
         }
 
+    }
+    
+    /**
+     * Deal with dot collision
+     */
+    private void handleDotCollision(){
+
+        //If we got a dot, munch and gimme points
+        if (game.gb.isDot(game.pacman.getX(), game.pacman.getY())) {
+            game.getSounds().playMunch();
+            game.score += 10;
+        }
+        
+        //If a power dot, power up pacman, extra pts, and make ghosts scared!
+        if (game.gb.isPowerDot(game.pacman.getX(), game.pacman.getY())) {
+            game.getSounds().playMunch();
+            game.score += 15;
+            game.pacman.setPowered(true);
+            game.evil1.setColor(Color.BLUE);
+            game.evil2.setColor(Color.BLUE);
+        }
     }
 
     /**
@@ -104,49 +131,28 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         int x = e.getKeyCode();
 
-        // Exit!
+        // Exit if the user hit <ESC>
         if (x == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
+        
+        int prevDir = game.pacman.getDirection();
 
         // Movement controls
         if (x == KeyEvent.VK_LEFT) {
             game.pacman.setDirection(Directions.LEFT);
-            if (!game.isCollision(game.pacman)) {
-                game.pacman.moveHorizontal(-10);
-            }
         } else if (x == KeyEvent.VK_RIGHT) {
             game.pacman.setDirection(Directions.RIGHT);
-            if (!game.isCollision(game.pacman)) {
-                game.pacman.moveHorizontal(10);
-            }
         } else if (x == KeyEvent.VK_UP) {
             game.pacman.setDirection(Directions.UP);
-            ;
-            if (!game.isCollision(game.pacman)) {
-                game.pacman.moveVertical(-10);
-            }
         } else if (x == KeyEvent.VK_DOWN) {
             game.pacman.setDirection(Directions.DOWN);
-            if (!game.isCollision(game.pacman)) {
-                game.pacman.moveVertical(10);
-            }
+        }    
+        
+        //However, if Pacman is now colliding with something, revert it.
+        if (game.isCollision(game.pacman)) {
+            game.pacman.setDirection(prevDir);
         }
-
-        // Deal with dot collision
-        if (game.gb.isDot(game.pacman.getX(), game.pacman.getY())) {
-            game.getSounds().playMunch();
-            game.score += 10;
-
-        }
-        if (game.gb.isPowerDot(game.pacman.getX(), game.pacman.getY())) {
-            game.getSounds().playMunch();
-            game.score += 15;
-            game.pacman.setPowered(true);
-            game.evil1.setColor(Color.BLUE);
-            game.evil2.setColor(Color.BLUE);
-        }
-
     }
 
     public void keyReleased(KeyEvent e) {

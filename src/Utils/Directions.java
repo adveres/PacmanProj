@@ -13,4 +13,5 @@ public class Directions {
 
     //How many (pixels??) we move on a move tick
     public static final int MOVE_DELTA = 10;
+    public static final int MOVE_SLOWLY = 5;
 }
